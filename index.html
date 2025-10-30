@@ -1,0 +1,1013 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pour Emily</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Montserrat:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Montserrat", sans-serif;
+        background: linear-gradient(135deg, #ffd1dc, #ffb7c5);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        overflow-x: hidden;
+        color: #8a1c4a;
+      }
+
+      /* Password Modal */
+      .password-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 182, 193, 0.95);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        z-index: 100;
+        transition: opacity 0.5s ease;
+      }
+
+      .password-content {
+        background: white;
+        padding: 30px;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        max-width: 400px;
+        width: 90%;
+        animation: bounceIn 1s forwards;
+      }
+
+      .password-content h2 {
+        font-family: "Dancing Script", cursive;
+        font-size: 32px;
+        margin-bottom: 20px;
+        color: #d81b60;
+      }
+
+      .password-input {
+        width: 100%;
+        padding: 12px;
+        border: 2px solid #ffb7c5;
+        border-radius: 10px;
+        margin-bottom: 15px;
+        font-size: 16px;
+        text-align: center;
+        outline: none;
+        transition: border-color 0.3s;
+      }
+
+      .password-input:focus {
+        border-color: #d81b60;
+      }
+
+      .submit-btn {
+        background: #d81b60;
+        color: white;
+        border: none;
+        padding: 12px 25px;
+        border-radius: 10px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: background 0.3s, transform 0.2s;
+      }
+
+      .submit-btn:hover {
+        background: #b71550;
+        transform: scale(1.05);
+      }
+
+      /* Welcome Screen */
+      .welcome-screen {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, #ffd1dc, #ffb7c5);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        z-index: 99;
+        transition: opacity 0.8s ease;
+      }
+
+      .welcome-message {
+        font-family: "Dancing Script", cursive;
+        font-size: 48px;
+        color: #d81b60;
+        text-align: center;
+        animation: pulse 2s infinite, float 3s ease-in-out infinite;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      /* Main Content */
+      .container {
+        width: 100%;
+        max-width: 900px;
+        padding: 20px;
+        margin-top: 50px;
+      }
+
+      .tabs {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin-bottom: 30px;
+        flex-wrap: wrap;
+      }
+
+      .tab {
+        background: rgba(255, 255, 255, 0.7);
+        border: none;
+        padding: 12px 20px;
+        border-radius: 50px;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: 600;
+        color: #d81b60;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .tab:hover {
+        background: rgba(255, 255, 255, 0.9);
+        transform: translateY(-3px);
+      }
+
+      .tab.active {
+        background: white;
+        color: #d81b60;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+      }
+
+      .content-area {
+        background: white;
+        border-radius: 20px;
+        padding: 30px;
+        min-height: 400px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .tab-content {
+        display: none;
+        animation: fadeIn 0.5s ease forwards;
+      }
+
+      .tab-content.active {
+        display: block;
+      }
+
+      /* Love Letter Tab */
+      .letter {
+        padding: 20px;
+        background: #fff5f7;
+        border-radius: 15px;
+        border: 2px dashed #ffb7c5;
+        margin-bottom: 20px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .letter-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+      }
+
+      .letter h3 {
+        font-family: "Dancing Script", cursive;
+        font-size: 28px;
+        color: #d81b60;
+      }
+
+      .letter-content {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.5s ease;
+      }
+
+      .letter.expanded .letter-content {
+        max-height: 10000px;
+      }
+
+      /* Music Tab */
+      .song {
+        background: #f8e8ee;
+        padding: 15px;
+        border-radius: 10px;
+        margin-bottom: 15px;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+      }
+
+      .song-icon {
+        font-size: 24px;
+        color: #d81b60;
+      }
+
+      .song-info h4 {
+        font-size: 18px;
+        margin-bottom: 5px;
+      }
+
+      .song-info p {
+        color: #888;
+        font-size: 14px;
+      }
+
+      /* Notes Tab */
+      .note {
+        background: #fce4ec;
+        padding: 15px;
+        border-radius: 10px;
+        margin-bottom: 15px;
+        border-left: 4px solid #d81b60;
+      }
+
+      /* Gallery Tab */
+      .gallery {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 15px;
+      }
+
+      .gallery-item {
+        border-radius: 10px;
+        overflow: hidden;
+        height: 200px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease;
+      }
+
+      .gallery-item:hover {
+        transform: scale(1.05);
+      }
+
+      .gallery-item img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      /* Decorative Elements */
+      .heart,
+      .teddy-bear {
+        position: absolute;
+        z-index: -1;
+        opacity: 0.2;
+        pointer-events: none;
+      }
+
+      .heart {
+        color: #d81b60;
+        font-size: 24px;
+        animation: float 6s ease-in-out infinite;
+      }
+
+      .teddy-bear {
+        font-size: 32px;
+        animation: float 8s ease-in-out infinite;
+      }
+
+      /* Animations */
+      @keyframes bounceIn {
+        0% {
+          transform: scale(0.8);
+          opacity: 0;
+        }
+        60% {
+          transform: scale(1.05);
+        }
+        100% {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes pulse {
+        0% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.05);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+
+      @keyframes float {
+        0% {
+          transform: translateY(0px);
+        }
+        50% {
+          transform: translateY(-10px);
+        }
+        100% {
+          transform: translateY(0px);
+        }
+      }
+
+      /* Responsive Design */
+      @media (max-width: 768px) {
+        .welcome-message {
+          font-size: 36px;
+        }
+
+        .tabs {
+          flex-direction: column;
+          align-items: center;
+        }
+
+        .tab {
+          width: 100%;
+          justify-content: center;
+        }
+
+        .gallery {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Password Modal -->
+    <div class="password-modal" id="passwordModal">
+      <div class="password-content">
+        <h2>Enter the secret code</h2>
+        <input
+          type="password"
+          class="password-input"
+          id="passwordInput"
+          placeholder="Our special word..."
+        />
+        <button class="submit-btn" id="submitPassword">Enter</button>
+      </div>
+    </div>
+
+    <!-- Welcome Screen -->
+    <div class="welcome-screen" id="welcomeScreen">
+      <h1 class="welcome-message">~Happy birthday Emily~</h1>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container" id="mainContent" style="display: none">
+      <div class="tabs">
+        <button class="tab active" data-tab="love-letter">
+          <span>❤️</span> Love Letter
+        </button>
+        <button class="tab" data-tab="music"><span>🎵</span> Music</button>
+        <button class="tab" data-tab="notes"><span>📝</span> Notes</button>
+        <a href="1.html" class="tab"><span>🌷</span> Gallery</a>
+
+      </div>
+
+      <div class="content-area">
+        <!-- Love Letter Tab -->
+        <div class="tab-content active" id="love-letter">
+          <h2>Ma chères Emily</h2>
+          <div class="letter">
+            <div class="letter-header">
+              <h3>mes permiers mots</h3>
+              <span>👇 Click to open</span>
+            </div>
+            <div class="letter-content">
+              <p>
+                Déjà commençons avec la base : BONNE ANNIVERSAIRE
+                EMILYYYYYYan🎂🎉🎊🎉🎊🎉🎊🎊🎊🎁
+              </p>
+              <p>
+                Je te souhaite un joyeux anniversaire de tout mon coeur. Tu es
+                une amis avec qui j'ai beaucoup de délire que j'aime de tout mon
+                coeur qui pour moi est comme une soeur. Cette amitié que
+                j'éprouve pour toi est grande et mon amie tu es une personne
+                avec qui je m'entend le mieux. D'un petit truc nous sommes
+                devenu très proche et je l'espere que cette amitié durera. Tu es
+                une personne qui m'apporte du bonheur de la joie et me fait
+                sourire (même si j'ai le sourire et le rire facile). J'espère ne
+                pas être une personne qui soit une épine à ton pied pour être
+                d'un caractère collant, fou, bête et immature tous ça mélangé
+                avec une certaine mani de raconté ma vie et de beaucoup parlé
+                😅(qui peut te faire te désespéré et trouvé ça très agaçant
+                surtout que je sais que c'est un caractère qui t'agace et j'en
+                suis Désolé de mon comportement). Je ne sait pas quoi dire, en
+                vrai ce que je veux c'est juste te dire que toi ma meilleur amis
+                tu compte beaucoup pour moi et je l'espere moi aussi. Je
+                l'espere aussi que cette amitié durera et que même plus tard
+                j'ai contact avec toi, n'oublie pas hein 😂on a un voyage à
+                faire au Japon!!! Mais revenons a nos mouton, j'espère aussi que
+                cette année soit la pour toi j'espère que la vie te donne du
+                bonheur, une bonne vie, une bonne santé et que ça perdurent pour
+                des décennies. Cette amitié qui comme dit plus tôt à commencé
+                d'un rien et qui je ne pensais pas qu'elle serait à se point
+                grande, fusionnelle et conpacte (a mon avis de mon point de vue)
+                durera. Je sais qu'il y à pas longtemps ton morale n'était pas
+                des meilleur mais sache que comme tu l'es pour moi je suis la,
+                présente, à l'ecoute et même derrière un écran je serait ton
+                épaule pour pleuré et déversé ta frustration et ton énervement
+                sur moi. Ça ne me dérangera pas si ça peut te faire te sentir
+                bien, je suis contente de t'aider. Je ne sais pas quoi dire mais
+                mon ressentit de cette amitié est très forte. Je ne sais pas si
+                mon amitié pour toi est réciproque de mon côté, ou que je sois
+                une des personne que tu as le plus confiance mais pour ma part
+                je te fait entièrement confiance. Des fois je doit te l'avouer
+                j'ai peur, peur d'etre délaissé je suis timide et réservé même
+                si je fait paraître normal avec mes sourire et mes rires et mon
+                côté à essayé petit à petit de parlé et m'integrer mais je ne
+                suis pas sûr de moi. Comme tu l'as dit je doit être confiante,
+                ce que j'essaye de faire et de me dire que oui tu m'aime bien et
+                non je serai pas délaissé si facilement mais ça ne marche pas
+                vraiment. Je dévie du sujet principal en tout cas alors je vais
+                te dire quelques mot encore : Emily Figueroa ton nom sera ancré
+                dans ma mémoire 😂je vais pas l'oublier de si tôt surtout si je
+                découvre tes exploie ou par je ne sais qu'elle raison ton nom
+                sur les journaux (on sait jamais ta vue!). Sache que je ne te
+                trouve pas méchante au contraire les gens peuvent te dire que tu
+                es chiante, méchante et n'importe quoi d'autre mais de mon point
+                de vue je ne vois que l'exact contraire de ses mot tu es droite
+                Emily tu as un bon coeur tu es une personnes qui pardonne vite,
+                ta façon de pensé est belle et même si comparé à d'autres
+                personnes je ne suis pas si proches de toi ou encore que avec
+                moi tu n'es pas comme ça je ne peut pas dire que tu es ses
+                quelques mots dit plus haut et même si je suis conne des fois à
+                ne pas différencier le second degré et autres à être lente dans
+                tous ce que je fait j'espere ne pas t'enerver tant que ça. Mais
+                bref Je ne sais pas si ce que j'ai dit est quelque chose de
+                long, de répétitif ou même de court mais j'espère que ce message
+                te touche 🥰je l'ai écrit en avance avec beaucoup de soins et
+                petit a petit quand le temps passe...je crois que je l'ai finis
+                le jour ou tu es aller à Taiyou pour mes albums le 2 février
+                enfin... J'ai changer il y a peu corrigeant des phrase sans
+                sens😂 et encore je sens que j'ai pas tout dit de se que j'avais
+                à dire mais bref.
+              </p>
+              <p>bref, À toi, ma meilleur amie Emily la femme a jinyoung 😂</p>
+            </div>
+          </div>
+
+          <div class="letter">
+            <div class="letter-header">
+              <h3>mes second mots</h3>
+              <span>👇 Click to open</span>
+            </div>
+            <div class="letter-content">
+              <p>
+                !!!!!!! Happy birthday Emily !!!!!!! 🎂🎉🍻Bon, je sais que de
+                base je dois faire plus petit mes textes pour ton anniversaire
+                mais bon j'l'ai fait trop de fois maintenant t'as l'habitude ✨.
+                En tout cas encore un joyeux anniversaire que t'es jours soit
+                plus heureux sans crainte et que tout aille pour le mieux. Te
+                voilà avec 16 ans et ça vas faire plus de 3 ans qu'on se connaîs
+                presque mdrrr et ce sont les 3 années les plus longue et belle
+                que j'ai eu à t'es côté💖. On a fait tellement de choses
+                ensemble que je ne pourrait même plus compté 🤣! Avec cette
+                amitié beaucoup de problèmes sont arrivés j'imagine.... Je sais
+                je devrait pas dire des truc triste ou autres mais bon... Je
+                sais que mon boulot de meilleures amies je le fait très mal et
+                je ne prend jamais de décision et je veux changé ça je veux
+                tenter, je veux essayé... Car je n'aime pas te voir triste. Il
+                doit être 00h00min00s quand je t'envoie ce message mais bon ✨je
+                tient à tenir mes 00h 00min00s 🤣 en tout cas pardonne moi pour
+                ce que je suis pour la fille qui ne comprend rien que je suis.
+                Être à t'es côté est très agréable et j'espère que ça dure
+                longtemps ! Je vais pas m'eterniser sur mon discours 🤣je sais
+                que je parle trop pour dire des conneries des fois c'est
+                inintéressant ça sert à rien je sais je devrait pas dire ça car
+                ça doit t'ennuyer des fois je suis beaucoup trop chiante mais
+                bon sache que je suis là si besoin énervé toi contre moi frappe
+                moi même mdrr si tu veux je m'en fiche si tu te sens bien. Et
+                sache que quoi que tu fassent je serai la à t'epauler Emily
+                vraiment n'importe quelle choses tu veux faire et réaliser 💖✨.
+                Je sais que je suis chiante que je te fait chier des fois, que
+                je ne sais pas m'exprimer mais je veux faire de mon mieux et ne
+                pas te vexé et rester tranquille avec toi je suis désolée pour
+                ce que je suis, je suis désolée d'etre comme je suis, et je suis
+                désolée de m'excuser alors que tu vas me dire que wsh je devrait
+                pas et que tu t'en fout....je suis juste Désolé d'etre moi des
+                fois... Je veux juste m'excuser peut être parce que au moment ou
+                j'ecris je me sentais pas bien dans un bad mood pendant ce petit
+                morceaux du texte mais j'avais envie de m'excuser ... Je sais
+                que je n'ai pas l'air d'écouter que je ne retient rien et
+                comprend tout de travers mal en plus de tout oublier
+                mais...pardonne moi pour les maladresse même si je sais que sais
+                déjà fait et que mes maladresse sont chiante...je ne sais pas
+                quoi faire mais je veux être une bonne amis pour toi.... Je sais
+                tu vas me dire que je devrait pas penser ça mais c'est plus fort
+                que moi...je sais c'est stupide très stupide mais voilà mais bon
+                je suis pas la pour dire ça.... Juste reste toi même, reste
+                belle comme tu es, soit la belle personnes que tu es tout les
+                jours reste en bonne santé reste avec de bonne ondes reste Emily
+                reste à mes côté si je te dérange pas trop en tout cas je te
+                souhaite tout le meilleur tout tout le bonheur tout les bonne
+                choses alors bonne anniversaire my besty enfin bonne
+                anniversaire Emy-baby💖😊🥰profite de la journée qui vas se
+                passer aujourd'hui car it's your day ✨
+              </p>
+            </div>
+          </div>
+
+          <div class="letter">
+            <div class="letter-header">
+              <h3>mon epitate</h3>
+              <span>👇 Click to open</span>
+            </div>
+            <div class="letter-content">
+              <p>
+                Bon, j'ai dit beaucoup de choses déjà le jours de Noël hahaha il
+                doit pas y avoir de nouveauté mais bon ça fait quoi plus de 4
+                ans qu'on se connais? Hahaha et je compte te souhaiter tout les
+                années À suivre ton anniversaire. J'attend avec hâte ton 18 ème
+                même! Mais bon 4 ans et je suis heureuse de t'avoir connue Emily
+                en 4 ans on À fait plein de choses et j'ai découvert plein de
+                choses ! Snif snif t'as 17 ans maintenant wsh mais bon bonne
+                anniversaire mon amie BESTO FRIENDO je suis vraiment heureuse
+                d'etre À t'es côté vraiment et j'aime ta présence et ton amitié
+                que je n'echangerai pour rien au monde vraiment. Tu es une amie
+                en or et ça tu l'as été tellement de fois comme par exemple
+                lorsque le contrôle d'histoire avec la metropolisation était
+                finis quand tu ma quitté dans le bus j'ai pas pu m'empecher de
+                pleurer vraiment les larmes voulais pas s'arrêter et ton message
+                ma vraiment réconforter ça peut être futile mais ça m'a donné un
+                peu plus de joie même si je dois l'avouer j'ai pleurer pendant
+                longtemps face à ce contrôle chez moi. Et vraiment je t'en dit
+                que merci, merci d'etre la Emily et d'etre mon amis, de
+                m'accepter, de me supporter, alors que je ne sais pas comment
+                parler, quoi dire, regrette, hésite dans mes propos, dans mes
+                actions et ne sais pas être critique et te suis beaucoup alors
+                que hahaha j'aime juste ta compagnie savoir que t'es la même si
+                on parle pas que si besoin je serai la quand tu veux parler
+                discuté me suffit. Merci de m'aimer comme je suis aussi hahaha
+                c'est un peu triste tout caaaaa donc on vas pas passer beaucoup
+                de temps... Je ne suis pas la meilleure des amis je suis À
+                moitié sourde Coupe tes principe te fait te répéter, ne sais pas
+                quoi dire, faire ou réconforté mais j'essaye de l'etre je ne
+                pense pas au actions que peut être je devrait faire et dire
+                (hahahha je suis dure a supporter). Je veux juste te dire que je
+                suis là raconte moi tout tes problème, soucis, ta vie, tes
+                critiques, tes enervement, je suis là pour t'ecouter jusqu'au
+                bout et te soutenir. Même si tu ne te vois pas comme moi je te
+                vois, et que ce qui est une idéalisation de ta personnes peut
+                être pour toi faux. Je te vois beaucoup en bien tu as t'es
+                défaut mais je les vois pas forcément comme un point au milieu
+                de la figure. Mais, sache que tu as beaucoup de capacité, de
+                respect pour tes principe et sache le Emily tu es une personne
+                très mignonne et belle qui s'habille peut être normalement pour
+                toi mais tu as un style qui te correspond et qui te vas très
+                bien où on se dit "tient elle a un beau style" même si c'est
+                tout a fait normal tu n'es pas une clocharde nan tu as un bon
+                style et qui te vas bien tu t'habille juste plus soft quand il y
+                à sport donc écoute pas quand on te dit ça car ta vraiment du
+                style✨.Ne doute pas de toi a ce niveau la je sais tout le monde
+                doute mais tu as de quoi beaucoup plaire en plus d'etre une
+                femme forte indépendante Qui débat sur ces principe! Hahaha je
+                sais que je donne plus de compliments que je m'en donne et que
+                vue le nombre de fois où je k'ai dit déjà c'est pas très
+                convaincant mais c'est ce que je vois. J'aime t'ecouter parler
+                débattre sur un sujet proposé un point de vue critiquer des
+                choses qui te soûl et que tu remarque j'aime tes moment petite
+                histoire tu as une façon de les raconté que j'adore vraiment tu
+                rend ce que tu raconte si intéressant ! Tu es une grande femmes
+                avec un avenir qui t'attend tu es très belle courageuse drôle
+                sympatique! Une amie en Or et, en plus de ça Je veux te souhaité
+                un merveilleux anniversaire, ✨j'espère c'etait À 00h00min et
+                00sec comme d'habitude ✨ mais enfin bref je te souhaite tous ce
+                qu'il y à de mieux ne doute pas de toi tu es une personne
+                brillante charmante au grand coeur et je te souhaite le bonheur
+                comme la santé comme tout ce qui à de bon. Tu peut toujours
+                compter sur moi saches le doute pas de ça et Encore joyeux
+                anniversaire Emily j'espère que tu trouvera ton Livaï~ ✨ your
+                Bestie ✨ Ps : HAHAHAHA J'ESPERE T'ES PRÊTE POUR UN VENDREDI,
+                SAMEDI, DIMANCHE EN MA COMPAGNIE
+              </p>
+            </div>
+          </div>
+
+          <div class="letter">
+            <div class="letter-header">
+              <h3>ma dernière déclaration</h3>
+              <span>👇 Click to open</span>
+            </div>
+            <div class="letter-content">
+              <p>
+                BONNE ANNIVERSAIRE EMILY!!!!! 🫦✨🎊🎉🥳Bon, j’imagine que j’ai
+                envoyer à 00h ! ✨ Enfin je l’espère. Mais faisons un topos de
+                cette année.Cette année elle a été vraiment riche en émotion,
+                entre le début avec la l1 et le voyage il y a eu plein de choses
+                qui se sont passées. On a goûter à la vie universitaire et on a
+                eu nos haut et bas on a pu se reposer loin de tout le stresse de
+                l’école et on a pu voir à quel point même sans être dans une
+                même école on est inséparable et j’adore ! Et franchement Emily
+                j’ai envie de te dire les choses honnêtement. Ça sera peut être
+                du déjà vue ce que je vais dire mais, je suis fière de toi, je
+                suis contente pour toi et je suis vraiment heureuse pour toi
+                pour tes réussite pour ton travail acharné et pour la femme que
+                tu es je tr trouve incroyable. Emily tu es une fille incroyable
+                une fille qui fait tellement pour tes ami, tu es toujours là
+                quand on a besoin et tu motive les gens tu donnes toujours des
+                bon conseil. Tu me motives, c’est voir comment tu n’abandonne
+                pas tes rêve tes idéaux et tes pense que je me dit moi même de
+                ne jamais laisser tomber. Tu es une personne magnifique
+                physiquement mentalement et dans tout, je te trouve vraiment
+                incroyable et je suis vraiment heureuse d’être ta meilleur amie
+                car j’aurai jamais cru avoir une amie comme toi une amie avec
+                qui je suis si bien si heureuse et même si on a nos haut et nos
+                bas car on est vraiment différente on est là l’une pour l’autre
+                tu es vraiment celle qui m’ouvre les yeux sur des aspect, des
+                sujet et autre que je n’aurai pas penser et tu es une fille que
+                j’admire beaucoup. Je veux surtout te dire que tu devrai avoir
+                confiance en toi en ce que tu vaut et en ce que tu es. Tu es une
+                personne qui devrait recevoir l’amour d’un homme fait pour toi
+                et ça je suis sûr que cela arrivera… dès le moment où tu
+                quittera la France bien sûr car la France c’est eurk et les
+                zomme francais beurk. Mais franchement Emily j’espère être là
+                encore et encore et encore que même tes petit enfant soit
+                fatigué de me voir faire chier leur grand mère je veux critiquer
+                les jeunes de la génération d’après avec toi quand on sera âgé
+                mais je sais que ça arrivera après tou… j’ai dit que je te
+                hanterai! Mais pour être plus sérieuse j’ai fait ce petit mot
+                pour te souhaiter un bonne anniversaire car ton anniversaire est
+                un jour spécial un jour que j’ai envie de fêter tout le temps
+                avec toi à chaque fois un jour ou je peux te rejoindre manger
+                avec toi et fêter ce beau jour qu’est ta naissance. Je sais que
+                ce jour est un jour que ta peur que tu angoisse beaucoup mais
+                c’est un jour que tu devrai ne pas te sentir mal ni vide car
+                c’est un jour plein de vitalité car c’est ton jour à toi un jour
+                ou une merveilleuse personne est née et sache le je serai
+                toujours là tant que tu n’est pas ailleurs (et même si t’avais
+                déménagé j’aurai tout fait pour être là à ton anniversaire ) je
+                serai là pour fêter avec toi. Alors bonne anniversaire encore
+                Emily! Et soit heureuse et profite de ce jours spécial!
+              </p>
+            </div>
+          </div>
+        </div>
+        <!-- Music Tab -->
+        <div class="tab-content" id="music">
+          <h2>Songs that remind me of you</h2>
+          <div class="song">
+            <div class="song-icon">🎵</div>
+            <div class="song-info">
+              <h4>DeBÍ TiRAR MáS FOToS</h4>
+              <p>by BAD BUNNY</p>
+            </div>
+          </div>
+          <div class="song">
+            <div class="song-icon">🎵💃</div>
+            <div class="song-info">
+              <h4>PAPACITO</h4>
+              <p>by Karol G</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Notes Tab -->
+        <div class="tab-content" id="notes">
+          <h2>Some reminders</h2>
+          <div class="note">
+            <p>T'es belle ne l'oublie pas</p>
+          </div>
+          <div class="note">
+            <p>Tu trouvera l'amour</p>
+          </div>
+          <div class="note">
+            <p>tes fesses sont sucrée</p>
+          </div>
+        </div>
+
+        <!-- Gallery Tab -->
+        <div class="tab-content" id="gallery">
+          <h2>Memories together</h2>
+          <div class="gallery">
+            <div class="gallery-item">
+              <img src="images/photo1.jpg" alt="Photo 1" />
+            </div>
+            <div class="gallery-item">
+              <img src="images/photo2.jpg" alt="Photo 2" />
+            </div>
+            <div class="gallery-item">
+              <img src="images/photo3.jpg" alt="Photo 3" />
+            </div>
+            <div class="gallery-item">
+              <img src="images/photo4.jpg" alt="Photo 4" />
+            </div>
+            <div class="gallery-item">
+              <img src="images/5.jpg" alt="Photo 5" />
+            </div>
+            <div class="gallery-item">
+              <img src="images/6.jpg" alt="Photo 6" />
+            </div>
+          </div>
+      </div>
+    </div>
+
+    <!-- Decorative elements -->
+    <div class="heart" style="top: 10%; left: 5%">❤️</div>
+    <div class="heart" style="top: 20%; right: 10%">❤️</div>
+    <div class="heart" style="bottom: 15%; left: 15%">❤️</div>
+    <div class="teddy-bear" style="top: 30%; left: 10%">🧸</div>
+    <div class="teddy-bear" style="bottom: 10%; right: 5%">🧸</div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        // Password check
+        const passwordModal = document.getElementById("passwordModal");
+        const welcomeScreen = document.getElementById("welcomeScreen");
+        const mainContent = document.getElementById("mainContent");
+        const passwordInput = document.getElementById("passwordInput");
+        const submitPassword = document.getElementById("submitPassword");
+
+        submitPassword.addEventListener("click", function () {
+          if (passwordInput.value === "x") {
+            passwordModal.style.opacity = "0";
+            setTimeout(() => {
+              passwordModal.style.display = "none";
+              welcomeScreen.style.display = "flex";
+
+              setTimeout(() => {
+                welcomeScreen.style.opacity = "0";
+                setTimeout(() => {
+                  welcomeScreen.style.display = "none";
+                  mainContent.style.display = "block";
+                }, 800);
+              }, 2500);
+            }, 500);
+          } else {
+            passwordInput.value = "";
+            passwordInput.placeholder = "essaye encore...";
+            passwordInput.style.borderColor = "#ff4d4d";
+            setTimeout(() => {
+              passwordInput.style.borderColor = "#ffb7c5";
+              passwordInput.placeholder = "ta lettre préférée...";
+            }, 1500);
+          }
+        });
+
+        // Allow Enter key to submit password
+        passwordInput.addEventListener("keypress", function (e) {
+          if (e.key === "Enter") {
+            submitPassword.click();
+          }
+        });
+
+        // Tab switching
+        const tabs = document.querySelectorAll(".tab");
+        const tabContents = document.querySelectorAll(".tab-content");
+
+        tabs.forEach((tab) => {
+          tab.addEventListener("click", function () {
+            const targetTab = this.getAttribute("data-tab");
+
+            // Update active tab
+            tabs.forEach((t) => t.classList.remove("active"));
+            this.classList.add("active");
+
+            // Show corresponding content
+            tabContents.forEach((content) => {
+              content.classList.remove("active");
+              if (content.id === targetTab) {
+                content.classList.add("active");
+              }
+            });
+          });
+        });
+
+        // Add floating decorative elements
+        function addFloatingElements() {
+          for (let i = 0; i < 15; i++) {
+            const heart = document.createElement("div");
+            heart.classList.add("heart");
+            heart.innerHTML = "❤️";
+            heart.style.left = Math.random() * 100 + "%";
+            heart.style.top = Math.random() * 100 + "%";
+            heart.style.animationDelay = Math.random() * 5 + "s";
+            document.body.appendChild(heart);
+          }
+
+          for (let i = 0; i < 5; i++) {
+            const teddy = document.createElement("div");
+            teddy.classList.add("teddy-bear");
+            teddy.innerHTML = "🧸";
+            teddy.style.left = Math.random() * 100 + "%";
+            teddy.style.top = Math.random() * 100 + "%";
+            teddy.style.animationDelay = Math.random() * 5 + "s";
+            document.body.appendChild(teddy);
+          }
+        }
+
+        addFloatingElements();
+      });
+    </script>
+    <!-- Code injected by live-server -->
+    <script>
+      // <![CDATA[  <-- For SVG support
+      if ("WebSocket" in window) {
+        (function () {
+          function refreshCSS() {
+            var sheets = [].slice.call(document.getElementsByTagName("link"));
+            var head = document.getElementsByTagName("head")[0];
+            for (var i = 0; i < sheets.length; ++i) {
+              var elem = sheets[i];
+              var parent = elem.parentElement || head;
+              parent.removeChild(elem);
+              var rel = elem.rel;
+              if (
+                (elem.href && typeof rel != "string") ||
+                rel.length == 0 ||
+                rel.toLowerCase() == "stylesheet"
+              ) {
+                var url = elem.href.replace(/(&|\?)_cacheOverride=\d+/, "");
+                elem.href =
+                  url +
+                  (url.indexOf("?") >= 0 ? "&" : "?") +
+                  "_cacheOverride=" +
+                  new Date().valueOf();
+              }
+              parent.appendChild(elem);
+            }
+          }
+          var protocol =
+            window.location.protocol === "http:" ? "ws://" : "wss://";
+          var address =
+            protocol + window.location.host + window.location.pathname + "/ws";
+          var socket = new WebSocket(address);
+          socket.onmessage = function (msg) {
+            if (msg.data == "reload") window.location.reload();
+            else if (msg.data == "refreshcss") refreshCSS();
+          };
+          if (
+            sessionStorage &&
+            !sessionStorage.getItem("IsThisFirstTime_Log_From_LiveServer")
+          ) {
+            console.log("Live reload enabled.");
+            sessionStorage.setItem("IsThisFirstTime_Log_From_LiveServer", true);
+          }
+        })();
+      } else {
+        console.error(
+          "Upgrade your browser. This Browser is NOT supported WebSocket for Live-Reloading."
+        );
+      }
+      // ]]>
+    </script>
+    <script>
+      // Sélectionne toutes les lettres
+      const letters = document.querySelectorAll(".letter");
+
+      // Parcourt chaque lettre
+      letters.forEach((letter) => {
+        letter.addEventListener("click", () => {
+          // Toggle la classe expanded (ouvre/ferme)
+          letter.classList.toggle("expanded");
+        });
+      });
+    </script>
+    <script>
+      function showGallery(setId) {
+        // Cache toutes les galeries
+        document.querySelectorAll(".gallery-set").forEach((set) => {
+          set.style.display = "none";
+        });
+
+        // Affiche seulement celle cliquée
+        document.getElementById(setId).style.display = "block";
+      }
+    </script>
+
+    <!-- Musique d'ambiance -->
+    <audio id="bgm" src="audio/emily.mp3" preload="auto" loop playsinline webkit-playsinline></audio>
+
+
+    <!-- petit bouton flottant pour couper/remettre la musique -->
+    <button id="bgmToggle"
+        aria-pressed="false"
+        title="Musique d’ambiance"
+        style="
+          position:fixed; right:16px; bottom:16px;
+          padding:10px 14px; border-radius:999px; border:none;
+          background:#d81b60; color:#fff; box-shadow:0 6px 14px rgba(0,0,0,.15);
+          font-weight:600; cursor:pointer; z-index:101;">
+  🔈
+    </button>
+    <script>
+(function () {
+  const bgm       = document.getElementById('bgm');
+  const toggle    = document.getElementById('bgmToggle');
+  const submit    = document.getElementById('submitPassword');
+  const input     = document.getElementById('passwordInput');
+
+  const BGM_ON_KEY  = 'bgm-enabled';
+  const BGM_VOL_KEY = 'bgm-volume';
+
+  // volume cible très bas
+  let targetVol = Number(localStorage.getItem(BGM_VOL_KEY) ?? 0.06);
+  if (!(targetVol >= 0 && targetVol <= 1)) targetVol = 0.06;
+
+  // on démarre muet (petit fondu après play)
+  bgm.volume = 0.0;
+
+  // ON par défaut si pas encore choisi
+  let enabled = localStorage.getItem(BGM_ON_KEY);
+  if (enabled === null) enabled = 'true';
+
+  function fade(to, ms = 800) {
+    const from = bgm.volume;
+    const t0 = performance.now();
+    function step(t) {
+      const p = Math.min(1, (t - t0) / ms);
+      bgm.volume = from + (to - from) * p;
+      if (p < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+
+  async function startBGM() {
+    if (enabled !== 'true') return;
+    try {
+      bgm.muted = false;
+      bgm.autoplay = true;
+      await bgm.play();           // même clic => autorisé
+      fade(targetVol, 900);
+      toggle.textContent = '🔊';
+      toggle.setAttribute('aria-pressed', 'true');
+    } catch (e) {
+      // si bloqué, l’utilisatrice pourra cliquer sur 🔈 pour lancer
+      console.warn('Lecture BGM bloquée:', e);
+      toggle.textContent = '🔈';
+      toggle.setAttribute('aria-pressed', 'false');
+    }
+  }
+
+  // ⬅️ clé : on démarre la musique DANS le même clic que le mot de passe valide
+  submit.addEventListener('click', function () {
+    if (input.value === 'x') startBGM();
+  });
+
+  // bouton on/off + mémorisation
+  toggle.addEventListener('click', async () => {
+    if (bgm.paused) {
+      try {
+        await bgm.play();
+        fade(targetVol, 300);
+        toggle.textContent = '🔊';
+        toggle.setAttribute('aria-pressed', 'true');
+        localStorage.setItem(BGM_ON_KEY, 'true');
+      } catch (e) {}
+    } else {
+      fade(0, 200);
+      setTimeout(() => bgm.pause(), 210);
+      toggle.textContent = '🔈';
+      toggle.setAttribute('aria-pressed', 'false');
+      localStorage.setItem(BGM_ON_KEY, 'false');
+    }
+  });
+
+  // clic droit (ou appui long) pour changer légèrement le volume (6% -> 10% -> 3%)
+  toggle.addEventListener('contextmenu', (e) => {
+    e.preventDefault();
+    const steps = [0.06, 0.10, 0.03];
+    const i = steps.findIndex(v => Math.abs(v - targetVol) < 0.001);
+    targetVol = steps[(i + 1) % steps.length];
+    localStorage.setItem(BGM_VOL_KEY, String(targetVol));
+    if (!bgm.paused) fade(targetVol, 200);
+  });
+})();
+  </script>
+
+
+  </body>
+</html>
