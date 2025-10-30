@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Pour Emily — Galerie & Vidéo</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Montserrat:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: "Montserrat", sans-serif;
+        background: linear-gradient(135deg, #ffd1dc, #ffb7c5);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        color: #8a1c4a;
+        padding: 30px;
+      }
+      .container {
+        width: 100%;
+        max-width: 900px;
+      }
+      .gallery-section {
+        background: white;
+        border-radius: 16px;
+        padding: 20px;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+      }
+      .gallery-section h2 {
+        font-family: "Dancing Script", cursive;
+        font-size: 28px;
+        color: #d81b60;
+        margin-bottom: 12px;
+        text-align: center;
+      }
+      .gallery-buttons {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-bottom: 16px;
+      }
+      .gallery-buttons button {
+        background: linear-gradient(135deg, #ffb6c1, #ffc8dd);
+        border: none;
+        padding: 12px 20px;
+        border-radius: 40px;
+        cursor: pointer;
+        font-weight: 600;
+        color: white;
+        font-size: 15px;
+        transition: transform 0.2s, background 0.3s;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+      }
+
+      .gallery-buttons button:hover {
+        transform: scale(1.08);
+        background: linear-gradient(135deg, #ff80ab, #ffb6c1);
+      }
+
+      .gallery-buttons button.active {
+        background: linear-gradient(135deg, #ff4f7a, #ff80ab);
+        color: white;
+        box-shadow: 0 6px 14px rgba(0, 0, 0, 0.2);
+      }
+      .gallery-buttons button {
+        background-image: radial-gradient(circle at 30% 30%, #ffe4ec, #ff9dbb);
+      }
+
+      .gallery-grid {
+        display: grid;
+        gap: 12px;
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      }
+      .thumb {
+        position: relative;
+        border-radius: 10px;
+        overflow: hidden;
+        width: 140px;
+        height: 140px;
+        background: #ffe9ef;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .thumb img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+        display: block;
+        transition: transform 0.3s ease;
+        border-radius: 10px;
+      }
+      .thumb:hover {
+        transform: scale(1.2);
+        z-index: 10;
+        box-shadow: 0 12px 20px rgba(0, 0, 0, 0.3);
+      }
+      .video-wrap {
+        display: flex;
+        justify-content: center;
+        margin-top: 10px;
+      }
+      .lightbox {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.75);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+      }
+      .lightbox.open {
+        display: flex;
+      }
+      .lightbox-content {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+        padding: 20px;
+        box-sizing: border-box;
+      }
+
+      .lightbox-content img {
+        width: auto;
+        height: auto;
+        max-width: 90vw; /* largeur max = 90% de la fenêtre */
+        max-height: 90vh; /* hauteur max = 90% de la fenêtre */
+        object-fit: contain;
+        border-radius: 15px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+        display: block;
+      }
+
+      .lb-close,
+      .lb-prev,
+      .lb-next {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 50%;
+        width: 44px;
+        height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        font-size: 22px;
+      }
+      .lb-close {
+        right: -10px;
+        top: -10px;
+        transform: none;
+        width: 36px;
+        height: 36px;
+      }
+      .lb-prev {
+        left: -60px;
+      }
+      .lb-next {
+        right: -60px;
+      }
+      @media (max-width: 600px) {
+        .lb-prev {
+          left: 8px;
+        }
+        .lb-next {
+          right: 8px;
+        }
+      }
+      .hidden {
+        display: none !important;
+      }
+
+      .video-wrap video {
+        width: 300px; /* largeur souhaitée */
+        max-width: 100%; /* reste responsive */
+        height: auto; /* conserve les proportions */
+        border-radius: 8px; /* coins arrondis */
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="gallery-section" id="gallerySection">
+        <h2>Galerie & Vidéo</h2>
+
+        <!-- Buttons -->
+        <div class="gallery-buttons" id="galleryButtons">
+          <button data-set="set1" class="active">Emily & Rebeca</button>
+          <button data-set="set2">Emily & Mariam</button>
+          <button data-set="set3">Emily & Soen</button>
+          <button data-set="video">🎬 Vidéo</button>
+        </div>
+
+        <!-- Photo grid container -->
+        <div id="galleryOutput">
+          <div class="gallery-grid" id="thumbGrid"></div>
+          <div class="video-wrap hidden" id="videoWrap">
+            <video id="galleryVideo" controls></video>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Lightbox -->
+    <div id="lightbox" class="lightbox" aria-hidden="true">
+      <div class="lightbox-content" role="dialog" aria-label="Image viewer">
+        <button class="lb-close" id="lbClose" title="Fermer">✕</button>
+        <button class="lb-prev" id="lbPrev" title="Précédent">❮</button>
+        <img id="lbImage" src="" alt="Large preview" />
+        <button class="lb-next" id="lbNext" title="Suivant">❯</button>
+      </div>
+    </div>
+
+    <script>
+      const sets = {
+        set1: [
+          "images/1.JPG",
+          "images/2.JPG",
+          "images/3.JPG",
+          "images/4.JPG",
+          "images/5.JPG",
+          "images/6.JPG",
+          "images/7.JPG",
+          "images/8.JPG",
+          "images/9.JPG",
+          "images/10.JPG",
+          "images/11.JPG",
+          "images/12.JPG",
+          "images/13.JPG",
+          "images/14.JPG",
+          "images/15.jpg",
+          "images/16.JPG",
+        ],
+        set2: [
+          "images/21.jpg",
+          "images/22.jpg",
+          "images/23.jpg",
+          "images/24.jpg",
+          "images/25.jpg",
+          "images/emily6.jpg",
+          "images/emily7.jpg",
+          "images/emily8.jpg",
+          "images/emily9.jpg",
+          "images/emily10.jpg",
+          "images/emily11.jpg",
+          "images/emily12.jpg",
+          "images/emily13.jpg",
+          "images/emily14.jpg",
+          "images/emily15.jpg",
+          "images/emily16.jpg",
+        ],
+        set3: [
+          "images/51.jpg",
+          "images/52.jpg",
+          "images/53.jpg",
+          "images/54.jpg",
+          "images/55.jpg",
+          "images/me6.jpg",
+          "images/me7.jpg",
+          "images/me8.jpg",
+          "images/me9.jpg",
+          "images/me10.jpg",
+          "images/me11.jpg",
+          "images/me12.jpg",
+          "images/me13.jpg",
+          "images/me14.jpg",
+          "images/me15.jpg",
+          "images/me16.jpg",
+        ],
+      };
+
+      const videos = [
+        "video/v1.mp4",
+        "video/v2.mp4",
+        "video/v3.mp4",
+        "video/v4.mp4",
+        "video/v5.mp4",
+        "video/v6.mp4",
+        "video/v7.mp4",
+        "video/v8.mp4",
+        "video/v9.mp4",
+        "video/v10.mp4",
+      ];
+      let currentVideoIndex = 0;
+
+      const btns = document.querySelectorAll("#galleryButtons button");
+      const thumbGrid = document.getElementById("thumbGrid");
+      const videoWrap = document.getElementById("videoWrap");
+      const galleryVideo = document.getElementById("galleryVideo");
+
+      // Lightbox
+      const lightbox = document.getElementById("lightbox");
+      const lbImage = document.getElementById("lbImage");
+      const lbClose = document.getElementById("lbClose");
+      const lbPrev = document.getElementById("lbPrev");
+      const lbNext = document.getElementById("lbNext");
+
+      let currentSetKey = "set1";
+      let currentIndex = 0;
+
+      // --- Build thumbnails
+      function buildThumbnails(setKey) {
+        thumbGrid.innerHTML = "";
+        const arr = sets[setKey] || [];
+        arr.forEach((src, i) => {
+          const div = document.createElement("div");
+          div.className = "thumb";
+          const img = document.createElement("img");
+          img.src = src;
+          img.alt = `photo ${i + 1}`;
+          img.onerror = () => {
+            img.src = "";
+            img.alt = "Image manquante";
+            img.style.background = "#ffe9ef";
+          };
+          div.appendChild(img);
+          div.addEventListener("click", () => openLightbox(setKey, i));
+          thumbGrid.appendChild(div);
+        });
+      }
+
+      function showSet(setKey) {
+        galleryVideo.pause();
+        galleryVideo.currentTime = 0;
+        if (setKey === "video") {
+          thumbGrid.classList.add("hidden");
+          videoWrap.classList.remove("hidden");
+          loadVideo(currentVideoIndex);
+        } else {
+          videoWrap.classList.add("hidden");
+          thumbGrid.classList.remove("hidden");
+          buildThumbnails(setKey);
+        }
+      }
+
+      btns.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          btns.forEach((b) => b.classList.remove("active"));
+          btn.classList.add("active");
+          const setKey = btn.dataset.set;
+          currentSetKey = setKey;
+          currentIndex = 0;
+          showSet(setKey);
+        });
+      });
+
+      // --- Lightbox
+      function openLightbox(setKey, idx) {
+        if (!sets[setKey] || !sets[setKey][idx]) return;
+        currentSetKey = setKey;
+        currentIndex = idx;
+        lbImage.src = sets[setKey][idx];
+        lightbox.classList.add("open");
+        document.body.style.overflow = "hidden";
+      }
+      function closeLightbox() {
+        lightbox.classList.remove("open");
+        document.body.style.overflow = "";
+      }
+      function showPrev() {
+        const arr = sets[currentSetKey];
+        if (!arr) return;
+        currentIndex = (currentIndex - 1 + arr.length) % arr.length;
+        lbImage.src = arr[currentIndex];
+      }
+      function showNext() {
+        const arr = sets[currentSetKey];
+        if (!arr) return;
+        currentIndex = (currentIndex + 1) % arr.length;
+        lbImage.src = arr[currentIndex];
+      }
+
+      lbClose.addEventListener("click", closeLightbox);
+      lbPrev.addEventListener("click", showPrev);
+      lbNext.addEventListener("click", showNext);
+      lightbox.addEventListener("click", (e) => {
+        if (e.target === lightbox) closeLightbox();
+      });
+      document.addEventListener("keydown", (e) => {
+        // Lightbox controls
+        if (lightbox.classList.contains("open")) {
+          if (e.key === "ArrowLeft") showPrev();
+          if (e.key === "ArrowRight") showNext();
+          if (e.key === "Escape") closeLightbox();
+        }
+
+        // Video controls (only if video is visible)
+        if (!videoWrap.classList.contains("hidden")) {
+          if (e.key === "ArrowLeft") {
+            // Vidéo précédente
+            currentVideoIndex =
+              (currentVideoIndex - 1 + videos.length) % videos.length;
+            loadVideo(currentVideoIndex);
+          }
+          if (e.key === "ArrowRight") {
+            // Vidéo suivante
+            currentVideoIndex = (currentVideoIndex + 1) % videos.length;
+            loadVideo(currentVideoIndex);
+          }
+        }
+      });
+
+      // --- Video functions
+      function loadVideo(idx) {
+        if (idx < 0 || idx >= videos.length) return;
+        galleryVideo.src = videos[idx];
+        galleryVideo.load();
+        galleryVideo.play().catch((err) => console.log("Erreur vidéo:", err));
+        currentVideoIndex = idx;
+      }
+      galleryVideo.addEventListener("ended", () => {
+        currentVideoIndex = (currentVideoIndex + 1) % videos.length;
+        loadVideo(currentVideoIndex);
+      });
+
+      // Swipe support
+      let touchStartX = 0,
+        touchEndX = 0;
+      galleryVideo.addEventListener("touchstart", (e) => {
+        touchStartX = e.changedTouches[0].screenX;
+      });
+
+      galleryVideo.addEventListener("touchend", (e) => {
+        touchEndX = e.changedTouches[0].screenX;
+        handleSwipe();
+      });
+
+      function handleSwipe() {
+        if (touchEndX < touchStartX - 50) {
+          currentVideoIndex = (currentVideoIndex + 1) % videos.length;
+          loadVideo(currentVideoIndex);
+        } else if (touchEndX > touchStartX + 50) {
+          currentVideoIndex =
+            (currentVideoIndex - 1 + videos.length) % videos.length;
+          loadVideo(currentVideoIndex);
+        }
+      }
+
+      // --- Initial
+      buildThumbnails("set1");
+      showSet("set1");
+    </script>
+    <!-- Musique Zelda (remplace le chemin par ton fichier) -->
+    <audio
+      id="bgm-zelda"
+      src="audio/Zelda.mp3"
+      preload="auto"
+      loop
+      playsinline
+      webkit-playsinline
+    ></audio>
+
+    <!-- Bouton on/off (facultatif) -->
+    <button
+      id="bgmToggle"
+      aria-pressed="false"
+      title="Musique d’ambiance"
+      style="
+        position: fixed;
+        right: 16px;
+        bottom: 16px;
+        padding: 10px 14px;
+        border-radius: 999px;
+        border: none;
+        background: #d81b60;
+        color: #fff;
+        box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15);
+        font-weight: 600;
+        cursor: pointer;
+        z-index: 9999;
+      "
+    >
+      🔈
+    </button>
+
+    <script>
+      (function () {
+        const bgm = document.getElementById("bgm-zelda");
+        const toggle = document.getElementById("bgmToggle");
+        const video = document.getElementById("galleryVideo"); // existe déjà dans ta page
+
+        const BGM_ON_KEY = "bgm-enabled";
+        const BGM_VOL_KEY = "bgm-volume";
+        const BASE_VOL_DEFAULT = 0.06; // ~6%
+
+        let targetVol = Number(
+          localStorage.getItem(BGM_VOL_KEY) ?? BASE_VOL_DEFAULT
+        );
+        if (!(targetVol >= 0 && targetVol <= 1)) targetVol = BASE_VOL_DEFAULT;
+
+        // Autoplay muet autorisé → on joue en sourdine, puis on démutera au premier geste
+        bgm.volume = 0.0;
+        bgm.muted = true;
+        // tente autoplay muet (ne casse rien si refusé)
+        bgm.play().catch(() => {});
+
+        // état ON/OFF mémorisé (ON par défaut)
+        let enabled = localStorage.getItem(BGM_ON_KEY);
+        if (enabled === null) enabled = "true";
+
+        function fadeTo(vTo, ms = 600) {
+          const from = bgm.volume;
+          const t0 = performance.now();
+          function step(t) {
+            const p = Math.min(1, (t - t0) / ms);
+            bgm.volume = from + (vTo - from) * p;
+            if (p < 1) requestAnimationFrame(step);
+          }
+          requestAnimationFrame(step);
+        }
+
+        async function unmuteAndRise() {
+          if (enabled !== "true") return;
+          try {
+            bgm.muted = false;
+            // (re)play dans le contexte du geste utilisateur, si besoin
+            if (bgm.paused) await bgm.play();
+            fadeTo(targetVol, 900);
+            toggle.textContent = "🔊";
+            toggle.setAttribute("aria-pressed", "true");
+            // on n’a besoin de le faire qu’une seule fois
+            removeFirstInteractionListeners();
+          } catch (e) {
+            // si ça échoue (rare), l’utilisatrice pourra cliquer sur 🔈
+            console.warn("BGM unlock failed:", e);
+          }
+        }
+
+        // 1ère interaction sur la page → démuter + fondu
+        function addFirstInteractionListeners() {
+          ["pointerdown", "keydown", "touchstart"].forEach((evt) =>
+            window.addEventListener(evt, unmuteAndRise, {
+              once: true,
+              passive: true,
+            })
+          );
+        }
+        function removeFirstInteractionListeners() {
+          ["pointerdown", "keydown", "touchstart"].forEach((evt) =>
+            window.removeEventListener(evt, unmuteAndRise, {
+              once: true,
+              passive: true,
+            })
+          );
+        }
+        addFirstInteractionListeners();
+
+        // Bouton on/off
+        toggle.addEventListener("click", async () => {
+          if (bgm.paused || bgm.muted || bgm.volume === 0) {
+            try {
+              bgm.muted = false;
+              await bgm.play();
+              fadeTo(targetVol, 300);
+              toggle.textContent = "🔊";
+              toggle.setAttribute("aria-pressed", "true");
+              localStorage.setItem(BGM_ON_KEY, "true");
+            } catch (e) {}
+          } else {
+            fadeTo(0, 200);
+            setTimeout(() => {
+              bgm.pause();
+            }, 210);
+            toggle.textContent = "🔈";
+            toggle.setAttribute("aria-pressed", "false");
+            localStorage.setItem(BGM_ON_KEY, "false");
+          }
+        });
+
+        // Clic droit / appui long → changer légèrement le volume cible
+        toggle.addEventListener("contextmenu", (e) => {
+          e.preventDefault();
+          const steps = [0.06, 0.1, 0.03]; // 6% -> 10% -> 3%
+          const i = steps.findIndex((v) => Math.abs(v - targetVol) < 0.001);
+          targetVol = steps[(i + 1) % steps.length];
+          localStorage.setItem(BGM_VOL_KEY, String(targetVol));
+          if (!bgm.paused && !bgm.muted) fadeTo(targetVol, 200);
+        });
+
+        // Duck la musique quand une vidéo joue (et remonte ensuite)
+        if (video) {
+          video.addEventListener("play", () => {
+            if (!bgm.paused) fadeTo(0.015, 250);
+          });
+          video.addEventListener("pause", () => {
+            if (!bgm.paused) fadeTo(targetVol, 250);
+          });
+          video.addEventListener("ended", () => {
+            if (!bgm.paused) fadeTo(targetVol, 250);
+          });
+        }
+      })();
+    </script>
+  </body>
+</html>
