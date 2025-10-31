@@ -786,26 +786,35 @@
         });
 
         // Tab switching
-        const tabs = document.querySelectorAll(".tab");
-        const tabContents = document.querySelectorAll(".tab-content");
+       <!-- ✅ NOUVEAU Tab switching avec hash/back -->
+  <script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const tabs = document.querySelectorAll('.tab[data-tab]');
+    const tabContents = document.querySelectorAll('.tab-content');
+  
+    function showTab(id, push = true) {
+      tabs.forEach(t => t.classList.toggle('active', t.getAttribute('data-tab') === id));
+      tabContents.forEach(c => c.classList.toggle('active', c.id === id));
+      if (push) history.pushState({ tab: id }, '', '#' + id);
+    }
+  
+    tabs.forEach(tab => {
+      tab.addEventListener('click', function () {
+        const id = this.getAttribute('data-tab');
+        if (id) showTab(id, true);
+      });
+    });
+  
+    window.addEventListener('popstate', (e) => {
+      const id = (e.state && e.state.tab) || (location.hash ? location.hash.slice(1) : 'love-letter');
+      showTab(id, false);
+    });
+  
+    const initial = location.hash ? location.hash.slice(1) : 'love-letter';
+    showTab(initial, false);
+  });
+  </script>
 
-        tabs.forEach((tab) => {
-          tab.addEventListener("click", function () {
-            const targetTab = this.getAttribute("data-tab");
-
-            // Update active tab
-            tabs.forEach((t) => t.classList.remove("active"));
-            this.classList.add("active");
-
-            // Show corresponding content
-            tabContents.forEach((content) => {
-              content.classList.remove("active");
-              if (content.id === targetTab) {
-                content.classList.add("active");
-              }
-            });
-          });
-        });
 
         // Add floating decorative elements
         function addFloatingElements() {
@@ -1000,6 +1009,7 @@
 
   </body>
 </html>
+
 
 
 
