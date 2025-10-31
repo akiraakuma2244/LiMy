@@ -785,9 +785,28 @@
           }
         });
 
-        // Tab switchi
+        // Tab switching
+        const tabs = document.querySelectorAll(".tab");
+        const tabContents = document.querySelectorAll(".tab-content");
 
-        
+        tabs.forEach((tab) => {
+          tab.addEventListener("click", function () {
+            const targetTab = this.getAttribute("data-tab");
+
+            // Update active tab
+            tabs.forEach((t) => t.classList.remove("active"));
+            this.classList.add("active");
+
+            // Show corresponding content
+            tabContents.forEach((content) => {
+              content.classList.remove("active");
+              if (content.id === targetTab) {
+                content.classList.add("active");
+              }
+            });
+          });
+        });
+
         // Add floating decorative elements
         function addFloatingElements() {
           for (let i = 0; i < 15; i++) {
@@ -1032,6 +1051,7 @@
 
   </body>
 </html>
+
 
 
 
