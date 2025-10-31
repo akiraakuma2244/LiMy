@@ -455,10 +455,13 @@
       showSet("set1");
     </script>
     <!-- Musique Zelda (remplace le chemin par ton fichier) -->
-     <audio
+    <!-- Zelda démarre tout de suite en muet -->
+    <audio
       id="bgm-zelda"
       src="audio/Zelda.mp3"
       preload="auto"
+      autoplay
+      muted
       loop
       playsinline
       webkit-playsinline
@@ -489,125 +492,115 @@
     </button>
 
     <script>
-      (function () {
-        const bgm = document.getElementById("bgm-zelda");
-        const toggle = document.getElementById("bgmToggle");
-        const video = document.getElementById("galleryVideo"); // existe déjà dans ta page
-
-        const BGM_ON_KEY = "bgm-enabled";
-        const BGM_VOL_KEY = "bgm-volume";
-        const BASE_VOL_DEFAULT = 0.06; // ~6%
-
-        let targetVol = Number(
-          localStorage.getItem(BGM_VOL_KEY) ?? BASE_VOL_DEFAULT
-        );
-        if (!(targetVol >= 0 && targetVol <= 1)) targetVol = BASE_VOL_DEFAULT;
-
-        // Autoplay muet autorisé → on joue en sourdine, puis on démutera au premier geste
-        bgm.volume = 0.0;
-        bgm.muted = true;
-        // tente autoplay muet (ne casse rien si refusé)
-        bgm.play().catch(() => {});
-
-        // état ON/OFF mémorisé (ON par défaut)
-        let enabled = localStorage.getItem(BGM_ON_KEY);
-        if (enabled === null) enabled = "true";
-
-        function fadeTo(vTo, ms = 600) {
-          const from = bgm.volume;
-          const t0 = performance.now();
-          function step(t) {
-            const p = Math.min(1, (t - t0) / ms);
-            bgm.volume = from + (vTo - from) * p;
-            if (p < 1) requestAnimationFrame(step);
-          }
-          requestAnimationFrame(step);
+    (function () {
+      const bgm    = document.getElementById("bgm-zelda");
+      const toggle = document.getElementById("bgmToggle");
+      const video  = document.getElementById("galleryVideo");
+    
+      const BGM_ON_KEY  = "bgm-enabled";
+      const BGM_VOL_KEY = "bgm-volume";
+      const BASE_VOL    = 0.06; // ~6%
+    
+      // état mémorisé
+      let enabled   = localStorage.getItem(BGM_ON_KEY);
+      if (enabled === null) enabled = "true";
+      let targetVol = Number(localStorage.getItem(BGM_VOL_KEY) ?? BASE_VOL);
+      if (!(targetVol >= 0 && targetVol <= 1)) targetVol = BASE_VOL;
+    
+      // démarre en muet (autoplay+muted déjà sur la balise)
+      bgm.volume = 0.0;
+    
+      // Petit helper pour fondu
+      function fadeTo(vTo, ms = 600) {
+        const from = bgm.volume;
+        const t0 = performance.now();
+        function step(t) {
+          const p = Math.min(1, (t - t0) / ms);
+          bgm.volume = from + (vTo - from) * p;
+          if (p < 1) requestAnimationFrame(step);
         }
-
-        async function unmuteAndRise() {
-          if (enabled !== "true") return;
-          try {
+        requestAnimationFrame(step);
+      }
+    
+      // Tentative d’activation du son (selon politique du navigateur)
+      async function tryUnmuteAndPlay() {
+        if (enabled !== "true") return;
+        try {
+          bgm.muted = false;
+          if (bgm.paused) await bgm.play();
+          fadeTo(targetVol, 900);
+          toggle.textContent = "🔊";
+          toggle.setAttribute("aria-pressed", "true");
+          removeFirstInteractionListeners();
+        } catch (e) {
+          // si bloqué, on restera en muet jusqu’au premier geste
+          toggle.textContent = "🔈";
+          toggle.setAttribute("aria-pressed", "false");
+        }
+      }
+    
+      // Si l’utilisatrice avait déjà accepté auparavant, on essaie direct
+      window.addEventListener("load", () => {
+        // bgm est déjà en lecture muette via autoplay+muted ; on tente le démutage
+        tryUnmuteAndPlay();
+      });
+    
+      // Premier geste sur la page → démuter + fondu (garanti)
+      function onFirstInteraction() { tryUnmuteAndPlay(); }
+      function addFirstInteractionListeners() {
+        ["pointerdown","keydown","touchstart"].forEach(evt =>
+          window.addEventListener(evt, onFirstInteraction, { once:true, passive:true })
+        );
+      }
+      function removeFirstInteractionListeners() {
+        ["pointerdown","keydown","touchstart"].forEach(evt =>
+          window.removeEventListener(evt, onFirstInteraction, { passive:true })
+        );
+      }
+      addFirstInteractionListeners();
+    
+      // Bouton on/off
+      toggle.addEventListener("click", async () => {
+        try {
+          if (bgm.paused || bgm.muted || bgm.volume === 0) {
             bgm.muted = false;
-            // (re)play dans le contexte du geste utilisateur, si besoin
-            if (bgm.paused) await bgm.play();
-            fadeTo(targetVol, 900);
+            await bgm.play();
+            fadeTo(targetVol, 300);
             toggle.textContent = "🔊";
             toggle.setAttribute("aria-pressed", "true");
-            // on n’a besoin de le faire qu’une seule fois
-            removeFirstInteractionListeners();
-          } catch (e) {
-            // si ça échoue (rare), l’utilisatrice pourra cliquer sur 🔈
-            console.warn("BGM unlock failed:", e);
-          }
-        }
-
-        // 1ère interaction sur la page → démuter + fondu
-        function addFirstInteractionListeners() {
-          ["pointerdown", "keydown", "touchstart"].forEach((evt) =>
-            window.addEventListener(evt, unmuteAndRise, {
-              once: true,
-              passive: true,
-            })
-          );
-        }
-        function removeFirstInteractionListeners() {
-          ["pointerdown", "keydown", "touchstart"].forEach((evt) =>
-            window.removeEventListener(evt, unmuteAndRise, {
-              once: true,
-              passive: true,
-            })
-          );
-        }
-        addFirstInteractionListeners();
-
-        // Bouton on/off
-        toggle.addEventListener("click", async () => {
-          if (bgm.paused || bgm.muted || bgm.volume === 0) {
-            try {
-              bgm.muted = false;
-              await bgm.play();
-              fadeTo(targetVol, 300);
-              toggle.textContent = "🔊";
-              toggle.setAttribute("aria-pressed", "true");
-              localStorage.setItem(BGM_ON_KEY, "true");
-            } catch (e) {}
+            localStorage.setItem(BGM_ON_KEY, "true");
           } else {
             fadeTo(0, 200);
-            setTimeout(() => {
-              bgm.pause();
-            }, 210);
+            setTimeout(() => bgm.pause(), 210);
             toggle.textContent = "🔈";
             toggle.setAttribute("aria-pressed", "false");
             localStorage.setItem(BGM_ON_KEY, "false");
           }
-        });
-
-        // Clic droit / appui long → changer légèrement le volume cible
-        toggle.addEventListener("contextmenu", (e) => {
-          e.preventDefault();
-          const steps = [0.06, 0.1, 0.03]; // 6% -> 10% -> 3%
-          const i = steps.findIndex((v) => Math.abs(v - targetVol) < 0.001);
-          targetVol = steps[(i + 1) % steps.length];
-          localStorage.setItem(BGM_VOL_KEY, String(targetVol));
-          if (!bgm.paused && !bgm.muted) fadeTo(targetVol, 200);
-        });
-
-        // Duck la musique quand une vidéo joue (et remonte ensuite)
-        if (video) {
-          video.addEventListener("play", () => {
-            if (!bgm.paused) fadeTo(0.015, 250);
-          });
-          video.addEventListener("pause", () => {
-            if (!bgm.paused) fadeTo(targetVol, 250);
-          });
-          video.addEventListener("ended", () => {
-            if (!bgm.paused) fadeTo(targetVol, 250);
-          });
-        }
-      })();
+        } catch (e) {}
+      });
+    
+      // Clic droit → change légèrement le volume cible (6% → 10% → 3%)
+      toggle.addEventListener("contextmenu", (e) => {
+        e.preventDefault();
+        const steps = [0.06, 0.10, 0.03];
+        const i = steps.findIndex(v => Math.abs(v - targetVol) < 0.001);
+        targetVol = steps[(i + 1) % steps.length];
+        localStorage.setItem(BGM_VOL_KEY, String(targetVol));
+        if (!bgm.paused && !bgm.muted) fadeTo(targetVol, 200);
+      });
+    
+      // Baisser la musique quand une vidéo joue
+      if (video) {
+        video.addEventListener("play",  () => { if (!bgm.paused) fadeTo(0.015, 250); });
+        video.addEventListener("pause", () => { if (!bgm.paused) fadeTo(targetVol, 250); });
+        video.addEventListener("ended", () => { if (!bgm.paused) fadeTo(targetVol, 250); });
+      }
+    })();
     </script>
+
   </body>
 </html>
+
 
 
 
