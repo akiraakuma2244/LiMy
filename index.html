@@ -861,129 +861,137 @@
     </script>
 
     <!-- Musique d'ambiance -->
-<audio id="bgm" src="audio/emily.mp3" preload="auto" loop playsinline webkit-playsinline></audio>
-
-<button id="bgmToggle"
-  aria-pressed="false"
-  title="Musique d’ambiance"
-  style="position:fixed; right:16px; bottom:16px; padding:10px 14px; border-radius:999px; border:none; background:#d81b60; color:#fff; box-shadow:0 6px 14px rgba(0,0,0,.15); font-weight:600; cursor:pointer; z-index:101;">
-  🔈
-</button>
-
- <script>
-(function () {
-  const bgm    = document.getElementById('bgm');
-  const toggle = document.getElementById('bgmToggle');
-  const submit = document.getElementById('submitPassword');
-  const input  = document.getElementById('passwordInput');
-
-  // 👉 Clés distinctes pour index.html
-  const BGM_ON_KEY  = 'bgm-enabled-index';
-  const BGM_VOL_KEY = 'bgm-volume-index';
-  const BASE_VOL    = 0.06;
-
-  let targetVol = Number(localStorage.getItem(BGM_VOL_KEY) ?? BASE_VOL);
-  if (!(targetVol >= 0 && targetVol <= 1)) targetVol = BASE_VOL;
-
-  // On démarre muet (pour iOS) ; on démutera après un geste
-  bgm.volume = 0.0;
-  bgm.muted  = true;
-
-  // ON par défaut si jamais réglé
-  let enabled = localStorage.getItem(BGM_ON_KEY);
-  if (enabled === null) enabled = 'true';
-
-  // Si tu veux forcer ON à chaque 1ère visite de la page, décommente :
-  // localStorage.setItem(BGM_ON_KEY, 'true'); enabled = 'true';
-
-  function fade(to, ms = 800) {
-    const from = bgm.volume;
-    const t0 = performance.now();
-    function step(t) {
-      const p = Math.min(1, (t - t0) / ms);
-      bgm.volume = from + (to - from) * p;
-      if (p < 1) requestAnimationFrame(step);
+<!-- Musique d'ambiance (NE METS PAS src ici) -->
+  <audio id="bgm" preload="none" loop playsinline webkit-playsinline data-src="audio/Emily.mp3"></audio>
+  
+  <button id="bgmToggle"
+    aria-pressed="false"
+    title="Musique d’ambiance"
+    style="position:fixed; right:16px; bottom:16px; padding:10px 14px; border-radius:999px; border:none; background:#d81b60; color:#fff; box-shadow:0 6px 14px rgba(0,0,0,.15); font-weight:600; cursor:pointer; z-index:101;">
+    🔈
+  </button>
+  
+  <script>
+  (function () {
+    const bgm    = document.getElementById('bgm');
+    const toggle = document.getElementById('bgmToggle');
+    const submit = document.getElementById('submitPassword');
+    const input  = document.getElementById('passwordInput');
+  
+    // Clés propres à index.html pour ne pas entrer en conflit avec d'autres pages
+    const BGM_ON_KEY  = 'bgm-enabled-index';
+    const BGM_VOL_KEY = 'bgm-volume-index';
+    const BASE_VOL    = 0.06;
+  
+    let targetVol = Number(localStorage.getItem(BGM_VOL_KEY) ?? BASE_VOL);
+    if (!(targetVol >= 0 && targetVol <= 1)) targetVol = BASE_VOL;
+  
+    bgm.volume = 0.0;     // on démarre en silence
+    bgm.muted  = true;    // démuté après un geste
+  
+    let enabled = localStorage.getItem(BGM_ON_KEY);
+    if (enabled === null) enabled = 'true';
+  
+    function ensureSrc() {
+      // on ne fixe la source qu'au moment du geste → meilleur taux de succès
+      if (!bgm.src || bgm.src.endsWith('#') || bgm.src === window.location.href) {
+        const want = bgm.getAttribute('data-src'); // "audio/Emily.mp3"
+        if (want && !bgm.src.endsWith(want)) {
+          bgm.src = want;
+        }
+      }
     }
-    requestAnimationFrame(step);
-  }
-
-  async function unlockAndPlay() {
-    if (enabled !== 'true') return;
-    try {
-      // (re)charge, joue dans le contexte du geste utilisateur
-      bgm.load();
-      await bgm.play();
-      bgm.muted = false;
-      fade(targetVol, 900);
-      toggle.textContent = '🔊';
-      toggle.setAttribute('aria-pressed', 'true');
-      removeFirstGestureUnlockers();
-    } catch (e) {
-      console.warn('Autoplay bloqué ou audio introuvable:', e);
-      toggle.textContent = '🔈';
-      toggle.setAttribute('aria-pressed', 'false');
+  
+    function fade(to, ms = 800) {
+      const from = bgm.volume;
+      const t0 = performance.now();
+      function step(t) {
+        const p = Math.min(1, (t - t0) / ms);
+        bgm.volume = from + (to - from) * p;
+        if (p < 1) requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
     }
-  }
-
-  // 1) Lancer la musique au clic sur "Enter" SI le mot de passe est bon
-  submit.addEventListener('click', function () {
-    if (String(input.value).trim().toLowerCase() === 'x') {
-      unlockAndPlay();
-    }
-  });
-
-  // 2) Secours : premier geste sur la page
-  const firstGestureEvents = ['pointerdown', 'keydown', 'touchstart'];
-  function addFirstGestureUnlockers() {
-    firstGestureEvents.forEach(evt =>
-      window.addEventListener(evt, unlockAndPlay, { once: true, passive: true })
-    );
-  }
-  function removeFirstGestureUnlockers() {
-    firstGestureEvents.forEach(evt =>
-      window.removeEventListener(evt, unlockAndPlay, { once: true, passive: true })
-    );
-  }
-  addFirstGestureUnlockers();
-
-  // 3) Bouton on/off + mémorisation (propres à index.html)
-  toggle.addEventListener('click', async () => {
-    try {
-      if (bgm.paused || bgm.muted || bgm.volume === 0) {
-        await bgm.play();
+  
+    async function unlockAndPlay() {
+      if (enabled !== 'true') return;
+      try {
+        ensureSrc();
+        bgm.load();
+        await bgm.play();   // dans le contexte du geste utilisateur
         bgm.muted = false;
-        fade(targetVol, 300);
+        fade(targetVol, 900);
         toggle.textContent = '🔊';
         toggle.setAttribute('aria-pressed', 'true');
-        localStorage.setItem(BGM_ON_KEY, 'true');
-      } else {
-        fade(0, 200);
-        setTimeout(() => { bgm.pause(); }, 210);
+        removeFirstGestureUnlockers();
+      } catch (e) {
+        console.warn('Autoplay bloqué ou audio introuvable:', e);
         toggle.textContent = '🔈';
         toggle.setAttribute('aria-pressed', 'false');
-        localStorage.setItem(BGM_ON_KEY, 'false');
       }
-    } catch (e) {
-      console.warn('Impossible de jouer la musique:', e);
     }
-  });
+  
+    // 1) Lancer la musique AU MÊME CLIC que la validation du mot de passe
+    submit.addEventListener('click', function () {
+      if (String(input.value).trim().toLowerCase() === 'x') {
+        unlockAndPlay();
+      }
+    });
+  
+    // 2) Secours : premier geste sur la page
+    const firstGestureEvents = ['pointerdown', 'keydown', 'touchstart'];
+    function addFirstGestureUnlockers() {
+      firstGestureEvents.forEach(evt =>
+        window.addEventListener(evt, unlockAndPlay, { once: true, passive: true })
+      );
+    }
+    function removeFirstGestureUnlockers() {
+      firstGestureEvents.forEach(evt =>
+        window.removeEventListener(evt, unlockAndPlay, { once: true, passive: true })
+      );
+    }
+    addFirstGestureUnlockers();
+  
+    // 3) Bouton on/off
+    toggle.addEventListener('click', async () => {
+      try {
+        if (bgm.paused || bgm.muted || bgm.volume === 0) {
+          ensureSrc();
+          await bgm.play();
+          bgm.muted = false;
+          fade(targetVol, 300);
+          toggle.textContent = '🔊';
+          toggle.setAttribute('aria-pressed', 'true');
+          localStorage.setItem(BGM_ON_KEY, 'true');
+        } else {
+          fade(0, 200);
+          setTimeout(() => { bgm.pause(); }, 210);
+          toggle.textContent = '🔈';
+          toggle.setAttribute('aria-pressed', 'false');
+          localStorage.setItem(BGM_ON_KEY, 'false');
+        }
+      } catch (e) {
+        console.warn('Impossible de jouer la musique:', e);
+      }
+    });
+  
+    // 4) Clic droit → changer légèrement le volume (6% → 10% → 3%)
+    toggle.addEventListener('contextmenu', (e) => {
+      e.preventDefault();
+      const steps = [0.06, 0.10, 0.03];
+      const i = steps.findIndex(v => Math.abs(v - targetVol) < 0.001);
+      targetVol = steps[(i + 1) % steps.length];
+      localStorage.setItem(BGM_VOL_KEY, String(targetVol));
+      if (!bgm.paused && !bgm.muted) fade(targetVol, 200);
+    });
+  
+    // 5) Log clair si le fichier est mal nommé / 404
+    bgm.addEventListener('error', () => {
+      console.error('Erreur audio (chemin/casse ?) →', bgm.currentSrc);
+    });
+  })();
+  </script>
 
-  // 4) Clic droit: changer le volume cible
-  toggle.addEventListener('contextmenu', (e) => {
-    e.preventDefault();
-    const steps = [0.06, 0.10, 0.03];
-    const i = steps.findIndex(v => Math.abs(v - targetVol) < 0.001);
-    targetVol = steps[(i + 1) % steps.length];
-    localStorage.setItem(BGM_VOL_KEY, String(targetVol));
-    if (!bgm.paused && !bgm.muted) fade(targetVol, 200);
-  });
-
-  // 5) Log utile si le fichier est mal nommé ou introuvable
-  bgm.addEventListener('error', () => {
-    console.error('Erreur audio (chemin/casse ?) →', bgm.currentSrc);
-  });
-})();
-</script>
 
 
     
@@ -992,6 +1000,7 @@
 
   </body>
 </html>
+
 
 
 
