@@ -871,38 +871,14 @@
 
     <!-- Musique d'ambiance -->
 <!-- Musique d'ambiance (NE METS PAS src ici) -->
-  <audio
-      id="bgm-zelda"
-      src="audio/Zelda.mp3"
-      preload="auto"
-      loop
-      playsinline
-      webkit-playsinline
-    ></audio>
+ <audio id="bgm" src="audio/Emily.mp3" preload="auto" loop playsinline webkit-playsinline></audio>
+<button id="bgmToggle"
+  aria-pressed="false"
+  title="Musique d’ambiance"
+  style="position:fixed; right:16px; bottom:16px; padding:10px 14px; border-radius:999px; border:none; background:#d81b60; color:#fff; box-shadow:0 6px 14px rgba(0,0,0,.15); font-weight:600; cursor:pointer; z-index:101;">
+  🔈
+</button>
 
-
-    <!-- Bouton on/off (facultatif) -->
-    <button
-      id="bgmToggle"
-      aria-pressed="false"
-      title="Musique d’ambiance"
-      style="
-        position: fixed;
-        right: 16px;
-        bottom: 16px;
-        padding: 10px 14px;
-        border-radius: 999px;
-        border: none;
-        background: #d81b60;
-        color: #fff;
-        box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15);
-        font-weight: 600;
-        cursor: pointer;
-        z-index: 9999;
-      "
-    >
-      🔈
-    </button>
 
   
   <script>
@@ -1034,6 +1010,7 @@
 
   </body>
 </html>
+
 
 
 
