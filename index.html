@@ -785,37 +785,9 @@
           }
         });
 
-        // Tab switching
-       <!-- ✅ NOUVEAU Tab switching avec hash/back -->
-  <script>
-  document.addEventListener('DOMContentLoaded', function () {
-    const tabs = document.querySelectorAll('.tab[data-tab]');
-    const tabContents = document.querySelectorAll('.tab-content');
-  
-    function showTab(id, push = true) {
-      tabs.forEach(t => t.classList.toggle('active', t.getAttribute('data-tab') === id));
-      tabContents.forEach(c => c.classList.toggle('active', c.id === id));
-      if (push) history.pushState({ tab: id }, '', '#' + id);
-    }
-  
-    tabs.forEach(tab => {
-      tab.addEventListener('click', function () {
-        const id = this.getAttribute('data-tab');
-        if (id) showTab(id, true);
-      });
-    });
-  
-    window.addEventListener('popstate', (e) => {
-      const id = (e.state && e.state.tab) || (location.hash ? location.hash.slice(1) : 'love-letter');
-      showTab(id, false);
-    });
-  
-    const initial = location.hash ? location.hash.slice(1) : 'love-letter';
-    showTab(initial, false);
-  });
-  </script>
+        // Tab switchi
 
-
+        
         // Add floating decorative elements
         function addFloatingElements() {
           for (let i = 0; i < 15; i++) {
@@ -942,11 +914,34 @@
     }
   
     // 1) Lancer la musique AU MÊME CLIC que la validation du mot de passe
-    submit.addEventListener('click', function () {
-      if (String(input.value).trim().toLowerCase() === 'x') {
-        unlockAndPlay();
-      }
-    });
+     submit.addEventListener('click', function () {
+    if (String(input.value).trim().toLowerCase() === 'x') {
+      localStorage.setItem('bgm-enabled-index', 'true'); // force ON au 1er succès
+      unlockAndPlay(); // lance la musique dans le même geste utilisateur
+      // et on lance aussi la transition d’écran (si ce n’est pas déjà géré ailleurs)
+      passwordModal.style.opacity = "0";
+      setTimeout(() => {
+        passwordModal.style.display = "none";
+        welcomeScreen.style.display = "flex";
+        setTimeout(() => {
+          welcomeScreen.style.opacity = "0";
+          setTimeout(() => {
+            welcomeScreen.style.display = "none";
+            mainContent.style.display = "block";
+          }, 800);
+        }, 2500);
+      }, 500);
+    } else {
+      passwordInput.value = "";
+      passwordInput.placeholder = "essaye encore...";
+      passwordInput.style.borderColor = "#ff4d4d";
+      setTimeout(() => {
+        passwordInput.style.borderColor = "#ffb7c5";
+        passwordInput.placeholder = "ta lettre préférée...";
+      }, 1500);
+    }
+  });
+
   
     // 2) Secours : premier geste sur la page
     const firstGestureEvents = ['pointerdown', 'keydown', 'touchstart'];
@@ -1002,6 +997,33 @@
   })();
   </script>
 
+  <script>
+  (function () {
+    const tabs = document.querySelectorAll('.tab[data-tab]');
+    const tabContents = document.querySelectorAll('.tab-content');
+  
+    function showTab(id, push = true) {
+      tabs.forEach(t => t.classList.toggle('active', t.getAttribute('data-tab') === id));
+      tabContents.forEach(c => c.classList.toggle('active', c.id === id));
+      if (push) history.pushState({ tab: id }, '', '#' + id);
+    }
+  
+    tabs.forEach(tab => {
+      tab.addEventListener('click', function () {
+        const id = this.getAttribute('data-tab');
+        if (id) showTab(id, true);
+      });
+    });
+  
+    window.addEventListener('popstate', (e) => {
+      const id = (e.state && e.state.tab) || (location.hash ? location.hash.slice(1) : 'love-letter');
+      showTab(id, false);
+    });
+  
+    const initial = location.hash ? location.hash.slice(1) : 'love-letter';
+    showTab(initial, false);
+  })();
+  </script>
 
 
     
@@ -1010,6 +1032,7 @@
 
   </body>
 </html>
+
 
 
 
