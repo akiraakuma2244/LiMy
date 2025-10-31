@@ -1062,17 +1062,9 @@
   });
 })();
   </script>
-  <script>
-  document.querySelector('a[href="1.html"]').addEventListener('click', function(e) {
-    e.preventDefault();
-    fetch('1.html')
-      .then(resp => resp.text())
-      .then(html => {
-        document.querySelector('.content-area').innerHTML = html;
-      });
-  });
-  </script>
+
 
 
   </body>
 </html>
+
