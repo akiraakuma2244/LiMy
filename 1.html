@@ -190,9 +190,38 @@
         height: auto; /* conserve les proportions */
         border-radius: 8px; /* coins arrondis */
       }
+      /* Effet de neige animée */
+      body {
+        position: relative;
+      }
+      
+      .snow {
+        position: fixed;
+        inset: 0;
+        background-image: url("neige.gif"); /* ← mets ici le nom exact du fichier */
+        background-repeat: repeat;
+        background-position: center top;
+        background-size: 512px auto;
+        opacity: 0.35; /* ajuste la transparence si tu veux */
+        pointer-events: none; /* laisse les clics passer au travers */
+        z-index: 5;
+      }
+      
+      .container {
+        position: relative;
+        z-index: 10;
+      }
+      
+      @media (prefers-reduced-motion: reduce) {
+        .snow {
+          display: none;
+        }
+      }
+
     </style>
   </head>
   <body>
+    <div class="snow" aria-hidden="true"></div>
     <div class="container">
       <div class="gallery-section" id="gallerySection">
         <h2>Galerie & Vidéo</h2>
@@ -600,6 +629,7 @@
 
   </body>
 </html>
+
 
 
 
