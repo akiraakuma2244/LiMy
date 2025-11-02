@@ -215,6 +215,13 @@
       }
 
       /* Music Tab */
+      .songs{
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 15px;
+      }
+      .song { margin: 0; }
+
       .song {
         background: #f8e8ee;
         padding: 15px;
@@ -678,68 +685,108 @@
           </div>
         </div>
         <!-- Music Tab -->
-        <div class="tab-content" id="music">
-          <h2>Songs that remind me of you</h2>
-          <div class="song">
-            <div class="song-icon">🎵</div>
-            <div class="song-info">
-              <h4>DeBÍ TiRAR MáS FOToS</h4>
-              <p>by BAD BUNNY</p>
-            </div>
+        <div class="content-area">
+  <!-- Love Letter Tab -->
+          <div class="tab-content active" id="love-letter">
+            <!-- ton contenu Love Letter inchangé -->
           </div>
-          <div class="song">
-            <div class="song-icon">🎵💃</div>
-            <div class="song-info">
-              <h4>PAPACITO</h4>
-              <p>by Karol G</p>
-            </div>
-          </div>
-        </div>
-         <div class="song">
-            <div class="song-icon">🎵💃</div>
-            <div class="song-info">
-              <h4>Butterfly on my right shoulder</h4>
-              <p>by noripy</p>
-            </div>
-          </div>
-        </div>
-         <div class="song">
-            <div class="song-icon">🎵💃</div>
-            <div class="song-info">
-              <h4>Believe</h4>
-              <p>by GOT7</p>
-            </div>
-          </div>
-        </div>
-         <div class="song">
-            <div class="song-icon">🎵💃</div>
-            <div class="song-info">
-              <h4>Coisinha do pai</h4>
-              <p>by Beth Carvalho</p>
-            </div>
-          </div>
-        </div>
         
+          <!-- Music Tab -->
+          <div class="tab-content" id="music">
+            <h2>Songs that remind me of you</h2>
+            <div class="songs">
+              <div class="song">
+                <div class="song-icon">🎵</div>
+                <div class="song-info">
+                  <h4>DeBÍ TiRAR MáS FOToS</h4>
+                  <p>by BAD BUNNY</p>
+                </div>
+              </div>
+        
+              <div class="song">
+                <div class="song-icon">🎵💃</div>
+                <div class="song-info">
+                  <h4>PAPACITO</h4>
+                  <p>by Karol G</p>
+                </div>
+              </div>
+        
+              <div class="song">
+                <div class="song-icon">🎵💃</div>
+                <div class="song-info">
+                  <h4>Butterfly on my right shoulder</h4>
+                  <p>by noripy</p>
+                </div>
+              </div>
+        
+              <div class="song">
+                <div class="song-icon">🎵💃</div>
+                <div class="song-info">
+                  <h4>Believe</h4>
+                  <p>by GOT7</p>
+                </div>
+              </div>
+        
+              <div class="song">
+                <div class="song-icon">🎵💃</div>
+                <div class="song-info">
+                  <h4>Coisinha do pai</h4>
+                  <p>by Beth Carvalho</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        
+          <!-- Notes Tab -->
+          <div class="tab-content" id="notes">
+            <h2>Some reminders</h2>
+            <div class="note"><p>Tu es une femme magnifique, forte et incroyable.</p></div>
+            <div class="note"><p>Tu reussira tout ce que tu entreprend n'en doute pas.</p></div>
+            <div class="note"><p>Même si la vie est dure, même si les choses ne se passent pas comme prévue, continue d'aller de l'avant et ne regarde pas derrière toi</p></div>
+            <div class="note"><p>Je serai toujours là pour toi, quoi qu'il arrive</p></div>
+            <div class="note"><p>PS : t'as vraiment de belles fesses ;)</p></div>
+          </div>
+        
+          <!-- Gallery Tab -->
+          <div class="tab-content" id="gallery">
+            <h2>Memories together</h2>
+            <div class="gallery">
+              <div class="gallery-item"><img src="images/photo1.jpg" alt="Photo 1" /></div>
+              <div class="gallery-item"><img src="images/photo2.jpg" alt="Photo 2" /></div>
+              <div class="gallery-item"><img src="images/photo3.jpg" alt="Photo 3" /></div>
+              <div class="gallery-item"><img src="images/photo4.jpg" alt="Photo 4" /></div>
+              <div class="gallery-item"><img src="images/5.jpg" alt="Photo 5" /></div>
+              <div class="gallery-item"><img src="images/6.jpg" alt="Photo 6" /></div>
+            </div>
+          </div>
+        </div>
 
+      
         <!-- Notes Tab -->
         <div class="tab-content" id="notes">
           <h2>Some reminders</h2>
-          <div class="note">
-            <p>Tu es une femme magnifique, forte et incroyable.</p>
-          </div>
-          <div class="note">
-            <p>Tu reussira tout ce que tu entreprend n'en doute pas.</p>
-          </div>
-          <div class="note">
-            <p>Même si la vie est dure, même si les choses ne se passent pas comme prévue, continue d'aller de l'avant et ne regarde pas derrière toi</p>
-          </div>
-          <div class="note">
-            <p>Je serai toujours là pour toi, quoi qu'il arrive</p>
-          </div>
-          <div class="note">
-            <p>PS : t'as vraiment de belles fesses ;)</p>
+          <div class="note"><p>Tu es une femme magnifique, forte et incroyable.</p></div>
+          <div class="note"><p>Tu reussira tout ce que tu entreprend n'en doute pas.</p></div>
+          <div class="note"><p>Même si la vie est dure, même si les choses ne se passent pas comme prévue, continue d'aller de l'avant et ne regarde pas derrière toi</p></div>
+          <div class="note"><p>Je serai toujours là pour toi, quoi qu'il arrive</p></div>
+          <div class="note"><p>PS : t'as vraiment de belles fesses ;)</p></div>
+        </div>
+      
+        <!-- Gallery Tab -->
+        <div class="tab-content" id="gallery">
+          <h2>Memories together</h2>
+          <div class="gallery">
+            <div class="gallery-item"><img src="images/photo1.jpg" alt="Photo 1" /></div>
+            <div class="gallery-item"><img src="images/photo2.jpg" alt="Photo 2" /></div>
+            <div class="gallery-item"><img src="images/photo3.jpg" alt="Photo 3" /></div>
+            <div class="gallery-item"><img src="images/photo4.jpg" alt="Photo 4" /></div>
+            <div class="gallery-item"><img src="images/5.jpg" alt="Photo 5" /></div>
+            <div class="gallery-item"><img src="images/6.jpg" alt="Photo 6" /></div>
           </div>
         </div>
+      </div> <!-- ← on ferme .content-area ici, après TOUTES les tabs -->
+
+
 
         <!-- Gallery Tab -->
         <div class="tab-content" id="gallery">
@@ -992,6 +1039,7 @@
 
   </body>
 </html>
+
 
 
 
