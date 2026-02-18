@@ -655,12 +655,12 @@
 
   <script>
 (function () {
-  const passwordModal = document.getElementById('passwordModal');
-  const welcomeScreen = document.getElementById('welcomeScreen');
-  const mainContent   = document.getElementById('mainContent');
-  const passwordInput = document.getElementById('passwordInput');
-  const submitPassword= document.getElementById('submitPassword');
-  const bgmToggle     = document.getElementById('bgmToggle');
+  const passwordModal  = document.getElementById('passwordModal');
+  const welcomeScreen  = document.getElementById('welcomeScreen');
+  const mainContent    = document.getElementById('mainContent');
+  const passwordInput  = document.getElementById('passwordInput');
+  const submitPassword = document.getElementById('submitPassword');
+  const bgmToggle      = document.getElementById('bgmToggle');
 
   function goIn() {
     passwordModal.style.opacity = "0";
@@ -701,14 +701,16 @@
   }
 
   submitPassword.addEventListener('click', handleSubmit);
-  passwordInput.addEventListener('keydown', (e) => {
-  if (e.key === 'Enter') {
-    e.preventDefault();
-    handleSubmit();
-  }
-});
 
+  passwordInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleSubmit();
+    }
+  });
+})();
 </script>
+
 
       
   <script>
@@ -746,6 +748,7 @@
 
   </body>
 </html>
+
 
 
 
