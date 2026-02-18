@@ -653,63 +653,63 @@
 </script>
 
 
-  <script>
-  (function () {
-    const passwordModal  = document.getElementById('passwordModal');
-    const welcomeScreen  = document.getElementById('welcomeScreen');
-    const mainContent    = document.getElementById('mainContent');
-    const passwordInput  = document.getElementById('passwordInput');
-    const submitPassword = document.getElementById('submitPassword');
-    const bgmToggle      = document.getElementById('bgmToggle');
-  
-    function goIn() {
-      passwordModal.style.opacity = "0";
+<script>
+(function () {
+  const passwordModal  = document.getElementById('passwordModal');
+  const welcomeScreen  = document.getElementById('welcomeScreen');
+  const mainContent    = document.getElementById('mainContent');
+  const passwordInput  = document.getElementById('passwordInput');
+  const submitPassword = document.getElementById('submitPassword');
+  const bgmToggle      = document.getElementById('bgmToggle');
+
+  function goIn() {
+    passwordModal.style.opacity = "0";
+    setTimeout(() => {
+      passwordModal.style.display = "none";
+      welcomeScreen.style.display = "flex";
       setTimeout(() => {
-        passwordModal.style.display = "none";
-        welcomeScreen.style.display = "flex";
+        welcomeScreen.style.opacity = "0";
         setTimeout(() => {
-          welcomeScreen.style.opacity = "0";
-          setTimeout(() => {
-            welcomeScreen.style.display = "none";
-            mainContent.style.display = "block";
-            history.replaceState({ tab: 'love-letter' }, '', '#love-letter');
-          }, 800);
-        }, 2500);
-      }, 500);
-  
-      if (typeof window.unlockAndPlay === 'function') {
-        window.unlockAndPlay();
-        if (bgmToggle) {
-          bgmToggle.textContent = '🔊';
-          bgmToggle.setAttribute('aria-pressed', 'true');
-        }
+          welcomeScreen.style.display = "none";
+          mainContent.style.display = "block";
+          history.replaceState({ tab: 'love-letter' }, '', '#love-letter');
+        }, 800);
+      }, 2500);
+    }, 500);
+
+    if (typeof window.unlockAndPlay === 'function') {
+      window.unlockAndPlay();
+      if (bgmToggle) {
+        bgmToggle.textContent = '🔊';
+        bgmToggle.setAttribute('aria-pressed', 'true');
       }
     }
-  
-    function handleSubmit() {
-      if (passwordInput.value.trim().toLowerCase() === 'x') {
-        goIn();
-      } else {
-        passwordInput.value = "";
-        passwordInput.placeholder = "essaye encore...";
-        passwordInput.style.borderColor = "#ff4d4d";
-        setTimeout(() => {
-          passwordInput.style.borderColor = "#ffb7c5";
-          passwordInput.placeholder = "ta lettre préférée...";
-        }, 1500);
-      }
+  }
+
+  function handleSubmit() {
+    if (passwordInput.value.trim().toLowerCase() === 'x') {
+      goIn();
+    } else {
+      passwordInput.value = "";
+      passwordInput.placeholder = "essaye encore...";
+      passwordInput.style.borderColor = "#ff4d4d";
+      setTimeout(() => {
+        passwordInput.style.borderColor = "#ffb7c5";
+        passwordInput.placeholder = "ta lettre préférée...";
+      }, 1500);
     }
-  
-    submitPassword.addEventListener('click', handleSubmit);
-  
-    passwordInput.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') {
-        e.preventDefault();
-        handleSubmit();
-      }
-    });
-  })();
-  </script>
+  }
+
+  submitPassword.addEventListener('click', handleSubmit);
+
+  passwordInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleSubmit();
+    }
+  });
+})();
+</script>
 
 
       
@@ -748,6 +748,7 @@
 
   </body>
 </html>
+
 
 
 
