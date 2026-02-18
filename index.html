@@ -610,7 +610,7 @@
   async function unlockAndPlay() {
     try {
       ensureSrc();        // on assigne la vraie source maintenant
-      bgm.load();
+      
       bgm.muted = false;  // démuter AVANT play (iOS friendly)
       await bgm.play();   // même clic utilisateur → 100% ok
       fade(targetVol, 900);
@@ -748,6 +748,7 @@
 
   </body>
 </html>
+
 
 
 
