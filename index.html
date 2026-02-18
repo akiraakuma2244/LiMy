@@ -922,10 +922,13 @@
   }
 
   submitPassword.addEventListener('click', handleSubmit);
-  passwordInput.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') handleSubmit();
-  });
-})();
+  passwordInput.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    handleSubmit();
+  }
+});
+
 </script>
 
       
@@ -964,6 +967,7 @@
 
   </body>
 </html>
+
 
 
 
